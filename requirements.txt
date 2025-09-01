@@ -1,0 +1,12 @@
+Flask
+pandas
+PyPDF2
+Pillow
+pytesseract
+requests
+beautifulsoup4
+transformers
+python-dotenv
+tweepy
+praw
+google-api-python-client
