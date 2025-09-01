@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --background-color: #f0f2f5;
+            --card-background: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: var(--background-color);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .user-info-card {
+            background-color: var(--background-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+        }
+
+        .user-info-card p {
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .user-info-card p strong {
+            color: #343a40;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-select, .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px 15px;
+        }
+        
+        .input-group-text {
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            border-color: #28a745;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Select Data Source</h1>
+
+        <div class="user-info-card">
+            <h5 class="mb-3" style="color: #343a40;">User Information</h5>
+            <p><strong>Name:</strong> {{ user_info.name }}</p>
+            <p><strong>Age:</strong> {{ user_info.age }}</p>
+            <p><strong>Address:</strong> {{ user_info.address }}</p>
+            <p><strong>Mobile:</strong> {{ user_info.mobile }}</p>
+        </div>
+
+        <form method="POST" action="/submit_data" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label for="data_type" class="form-label">Data Source</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-database"></i></span>
+                    <select name="data_type" id="data_type" class="form-select">
+                        <option value="url">URL</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="reddit">Reddit</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="csv">CSV File</option>
+                        <option value="pdf">PDF File</option>
+                        <option value="ss">Image/Screenshot</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="input_field" class="form-label" id="input_label">Enter URL</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="input_icon"><i class="fas fa-link"></i></span>
+                    <input type="text" name="input_value" id="input_field" class="form-control" placeholder="e.g., https://www.youtube.com/watch?v=..." required>
+                    <input type="file" name="file_upload" id="file_upload" class="form-control" style="display: none;">
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">
+                    Submit Data <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dataTypeSelect = document.getElementById("data_type");
+            const inputField = document.getElementById("input_field");
+            const fileUpload = document.getElementById("file_upload");
+            const inputLabel = document.getElementById("input_label");
+            const inputIcon = document.getElementById("input_icon");
+
+            function toggleFields() {
+                const type = dataTypeSelect.value;
+                
+                // Reset fields
+                inputField.style.display = 'block';
+                inputField.removeAttribute('name');
+                inputField.required = false;
+                fileUpload.style.display = 'none';
+                fileUpload.removeAttribute('name');
+                fileUpload.required = false;
+
+                // Update based on selection
+                if (type === "csv" || type === "pdf" || type === "ss") {
+                    inputLabel.innerText = "Upload File";
+                    inputIcon.innerHTML = '<i class="fas fa-paperclip"></i>';
+                    inputField.style.display = 'none';
+                    fileUpload.style.display = 'block';
+                    fileUpload.setAttribute('name', 'file');
+                    fileUpload.required = true;
+                } else if (type === "url") {
+                    inputLabel.innerText = "Enter URL";
+                    inputIcon.innerHTML = '<i class="fas fa-link"></i>';
+                    inputField.placeholder = "e.g., https://www.youtube.com/watch?v=...";
+                    inputField.setAttribute('name', 'url');
+                    inputField.required = true;
+                } else if (type === "twitter") {
+                    inputLabel.innerText = "Enter Twitter Keyword";
+                    inputIcon.innerHTML = '<i class="fab fa-twitter"></i>';
+                    inputField.placeholder = "e.g., AI in healthcare";
+                    inputField.setAttribute('name', 'keyword');
+                    inputField.required = true;
+                } else if (type === "reddit") {
+                    inputLabel.innerText = "Enter Reddit Subreddit";
+                    inputIcon.innerHTML = '<i class="fab fa-reddit"></i>';
+                    inputField.placeholder = "e.g., technology";
+                    inputField.setAttribute('name', 'subreddit');
+                    inputField.required = true;
+                } else if (type === "facebook") {
+                    inputLabel.innerText = "Enter Facebook Page ID";
+                    inputIcon.innerHTML = '<i class="fab fa-facebook"></i>';
+                    inputField.placeholder = "e.g., 1234567890";
+                    inputField.setAttribute('name', 'fb_page');
+                    inputField.required = true;
+                }
+            }
+
+            dataTypeSelect.addEventListener("change", toggleFields);
+            toggleFields(); // Initial call to set up the form correctly
+        });
+    </script>
+</body>
+</html>
