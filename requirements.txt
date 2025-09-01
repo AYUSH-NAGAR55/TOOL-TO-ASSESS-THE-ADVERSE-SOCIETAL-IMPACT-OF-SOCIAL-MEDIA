@@ -9,4 +9,5 @@ transformers
 python-dotenv
 tweepy
 praw
+gunicorn
 google-api-python-client
